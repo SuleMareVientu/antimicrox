@@ -22,6 +22,7 @@
 #include "globalvariables.h"
 #include "inputdevice.h"
 #include "joybuttontypes/joybutton.h"
+#include "mousedialog/joymousepositiondialog.h"
 
 #include <QActionGroup>
 #include <QDebug>
@@ -54,6 +55,10 @@ void JoyButtonContextMenu::buildMenu()
     action = this->addAction(tr("Clear"));
     action->setCheckable(false);
     connect(action, &QAction::triggered, this, &JoyButtonContextMenu::clearButton);
+
+    action = this->addAction(tr("Move to Position"));
+    action->setCheckable(false);
+    connect(action, &QAction::triggered, this, &JoyButtonContextMenu::mouseMoveToPosition);
 
     this->addSeparator();
 
@@ -166,3 +171,23 @@ void JoyButtonContextMenu::disableSetMode()
 }
 
 void JoyButtonContextMenu::clearButton() { QMetaObject::invokeMethod(button, "clearSlotsEventReset"); }
+
+void JoyButtonContextMenu::mouseMoveToPosition()
+{
+    JoyButtonSlot *slot = new JoyButtonSlot(0, JoyButtonSlot::JoyMousePosition, nullptr);
+    JoyMousePositionDialog *dialog = new JoyMousePositionDialog(slot, qobject_cast<QWidget *>(parent()));
+    
+    JoyButton *localButton = button;
+    
+    if (dialog->exec() == QDialog::Accepted)
+    {
+        PadderCommon::inputDaemonMutex.lock();
+        localButton->insertAssignedSlot(slot);
+        PadderCommon::inputDaemonMutex.unlock();
+    }
+    else
+    {
+        delete slot;
+    }
+    dialog->deleteLater();
+}

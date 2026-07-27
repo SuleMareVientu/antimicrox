@@ -42,6 +42,7 @@ class JoyButtonContextMenu : public QMenu
     void switchSetMode(QAction *action);
     void disableSetMode();
     void clearButton();
+    void mouseMoveToPosition();
     void createActionForGroup(QActionGroup *tempGroup, QString actionText, QAction *action, QMenu *tempSetMenu,
                               int setSelection, int currentSelection, int setDataInc, int setCondition);
 };

@@ -964,6 +964,18 @@ void JoyButton::addEachSlotToActives(JoyButtonSlot *slot, int &i, bool &delaySeq
 
         break;
     }
+    case JoyButtonSlot::JoyMousePosition: {
+        i++;
+
+        qDebug() << i << ": It's a JoyMousePosition with name: " << slot->getSlotString();
+
+        sendevent(slot, true);
+
+        if (slot->getSnapBack())
+            getActiveSlotsLocal().append(slot);
+
+        break;
+    }
     default:
         break;
     }
@@ -1837,7 +1849,8 @@ void JoyButton::buildActiveZoneSummarySwitchSlots(JoyButtonSlot::JoySlotInputAct
     case JoyButtonSlot::JoyLoadProfile:
     case JoyButtonSlot::JoySetChange:
     case JoyButtonSlot::JoyTextEntry:
-    case JoyButtonSlot::JoyExecute: {
+    case JoyButtonSlot::JoyExecute:
+    case JoyButtonSlot::JoyMousePosition: {
         QString temp = slot->getSlotString();
 
         if (behindHold)
@@ -1962,6 +1975,7 @@ QList<JoyButtonSlot *> JoyButton::getActiveZoneList()
             case JoyButtonSlot::JoySetChange:
             case JoyButtonSlot::JoyTextEntry:
             case JoyButtonSlot::JoyExecute:
+            case JoyButtonSlot::JoyMousePosition:
             case JoyButtonSlot::JoyMix: {
                 tempSlotList.append(slot);
                 break;
@@ -3259,6 +3273,9 @@ void JoyButton::releaseEachSlot(bool &changeRepeatState, int &references, int te
     {
         currentSetChangeSlot = slot;
         slotSetChangeTimer.start();
+    } else if (mode == JoyButtonSlot::JoyMousePosition)
+    {
+        sendevent(slot, false);
     }
 }
 

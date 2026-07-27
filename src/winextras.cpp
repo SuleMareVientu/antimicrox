@@ -6,6 +6,8 @@
 #include <qt_windows.h>
 
 #include <QCoreApplication>
+#include <QGuiApplication>
+#include <QScreen>
 #include <QDebug>
 #include <QDir>
 #include <QHashIterator>
@@ -503,4 +505,27 @@ QPoint WinExtras::getCursorPos()
 
     QPoint temp(cursorPoint.x, cursorPoint.y);
     return temp;
+}
+
+QRect WinExtras::getForegroundWindowRect()
+{
+    QRect result;
+    HWND hwnd = GetForegroundWindow();
+    if (hwnd != NULL)
+    {
+        RECT rect;
+        if (GetWindowRect(hwnd, &rect))
+        {
+            result = QRect(rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top);
+            
+            if (QGuiApplication::primaryScreen()) {
+                qreal ratio = QGuiApplication::primaryScreen()->devicePixelRatio();
+                if (ratio != 1.0) {
+                    result = QRect(result.x() / ratio, result.y() / ratio, 
+                                   result.width() / ratio, result.height() / ratio);
+                }
+            }
+        }
+    }
+    return result;
 }

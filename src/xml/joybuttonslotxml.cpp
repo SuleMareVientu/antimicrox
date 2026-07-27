@@ -175,6 +175,25 @@ void JoyButtonSlotXml::readEachSlot(QXmlStreamReader *xml, JoyButtonSlot *joyBtn
         {
             QString temptext = xml->readElementText();
             extraStringData = temptext;
+        } else if ((xml->name().toString() == "targetx") && xml->isStartElement())
+        {
+            QString temptext = xml->readElementText();
+            joyBtnSlot->setTargetPosition(temptext.toInt(), joyBtnSlot->getTargetY());
+        } else if ((xml->name().toString() == "targety") && xml->isStartElement())
+        {
+            QString temptext = xml->readElementText();
+            joyBtnSlot->setTargetPosition(joyBtnSlot->getTargetX(), temptext.toInt());
+        } else if ((xml->name().toString() == "positionspace") && xml->isStartElement())
+        {
+            QString temptext = xml->readElementText();
+            if (temptext == "window")
+                joyBtnSlot->setPositionSpace(JoyButtonSlot::PositionRelativeToActiveWindow);
+            else
+                joyBtnSlot->setPositionSpace(JoyButtonSlot::PositionRelativeToScreen);
+        } else if ((xml->name().toString() == "snapback") && xml->isStartElement())
+        {
+            QString temptext = xml->readElementText();
+            joyBtnSlot->setSnapBack(temptext == "1");
         } else if ((xml->name().toString() == "mode") && xml->isStartElement())
         {
             QString temptext = xml->readElementText();
@@ -227,6 +246,9 @@ void JoyButtonSlotXml::readEachSlot(QXmlStreamReader *xml, JoyButtonSlot *joyBtn
             } else if (temptext == "mix")
             {
                 joyBtnSlot->setSlotMode(JoyButtonSlot::JoyMix);
+            } else if (temptext == "mouseposition")
+            {
+                joyBtnSlot->setSlotMode(JoyButtonSlot::JoyMousePosition);
             }
         } else
         {
@@ -382,6 +404,16 @@ void JoyButtonSlotXml::writeEachSlot(QXmlStreamWriter *xml, JoyButtonSlot *joyBt
         {
             xml->writeTextElement("arguments", joyBtnSlot->getExtraData().toString());
         }
+    } else if (joyBtnSlot->getSlotMode() == JoyButtonSlot::JoyMousePosition)
+    {
+        xml->writeTextElement("code", QString::number(joyBtnSlot->getSlotCode()));
+        xml->writeTextElement("targetx", QString::number(joyBtnSlot->getTargetX()));
+        xml->writeTextElement("targety", QString::number(joyBtnSlot->getTargetY()));
+        if (joyBtnSlot->getPositionSpace() == JoyButtonSlot::PositionRelativeToActiveWindow)
+            xml->writeTextElement("positionspace", "window");
+        else
+            xml->writeTextElement("positionspace", "screen");
+        xml->writeTextElement("snapback", joyBtnSlot->getSnapBack() ? "1" : "0");
     } else
     {
         xml->writeTextElement("code", QString::number(joyBtnSlot->getSlotCode()));
@@ -454,6 +486,10 @@ void JoyButtonSlotXml::writeEachSlot(QXmlStreamWriter *xml, JoyButtonSlot *joyBt
 
     case JoyButtonSlot::JoyMix:
         xml->writeCharacters("mix");
+        break;
+
+    case JoyButtonSlot::JoyMousePosition:
+        xml->writeCharacters("mouseposition");
         break;
     }
 

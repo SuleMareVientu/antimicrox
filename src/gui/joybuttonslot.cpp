@@ -37,6 +37,11 @@ JoyButtonSlot::JoyButtonSlot(QObject *parent)
     previousDistance = 0.0;
     easingActive = false;
     mix_slots = nullptr;
+    m_targetX = 32767;
+    m_targetY = 32767;
+    m_positionSpace = PositionRelativeToScreen;
+    m_snapBack = false;
+    m_originalPosition = QPoint(0, 0);
 }
 
 JoyButtonSlot::JoyButtonSlot(int code, JoySlotInputAction mode, QObject *parent)
@@ -74,6 +79,9 @@ JoyButtonSlot::JoyButtonSlot(QString text, JoySlotInputAction mode, QObject *par
     m_distance = 0.0;
     easingActive = false;
     mix_slots = nullptr;
+    m_targetX = 32767;
+    m_targetY = 32767;
+    m_positionSpace = PositionRelativeToScreen;
 
     if ((mode == JoyLoadProfile) || (mode == JoyTextEntry) || (mode == JoyExecute))
     {
@@ -327,6 +335,16 @@ QString JoyButtonSlot::getSlotString()
 
             break;
         }
+        case JoyMousePosition: {
+            QString spaceSuffix = (m_positionSpace == PositionRelativeToActiveWindow) ? tr(" (Window)") : "";
+            QString snapBackSuffix = m_snapBack ? tr(" (Snap Back)") : "";
+            newlabel.append(tr("[Move to Pos] %1%, %2%%3%4")
+                                .arg(qRound(m_targetX / 65535.0 * 100.0))
+                                .arg(qRound(m_targetY / 65535.0 * 100.0))
+                                .arg(spaceSuffix)
+                                .arg(snapBackSuffix));
+            break;
+        }
         case JoyButtonSlot::JoyMix: {
             bool firstTime = true;
 
@@ -393,6 +411,28 @@ void JoyButtonSlot::setExtraData(QVariant data) { this->extraData = data; }
 
 QVariant JoyButtonSlot::getExtraData() const { return extraData; }
 
+void JoyButtonSlot::setTargetPosition(int x, int y)
+{
+    m_targetX = x;
+    m_targetY = y;
+}
+
+int JoyButtonSlot::getTargetX() const { return m_targetX; }
+
+int JoyButtonSlot::getTargetY() const { return m_targetY; }
+
+void JoyButtonSlot::setPositionSpace(JoyMousePositionSpace space) { m_positionSpace = space; }
+
+JoyButtonSlot::JoyMousePositionSpace JoyButtonSlot::getPositionSpace() const { return m_positionSpace; }
+
+void JoyButtonSlot::setSnapBack(bool snapBack) { m_snapBack = snapBack; }
+
+bool JoyButtonSlot::getSnapBack() const { return m_snapBack; }
+
+void JoyButtonSlot::setOriginalPosition(QPoint pos) { m_originalPosition = pos; }
+
+QPoint JoyButtonSlot::getOriginalPosition() const { return m_originalPosition; }
+
 /**
  * @brief Deep-copies member variables from another JoyButtonSlot object
  *   into this object.
@@ -419,6 +459,12 @@ void JoyButtonSlot::copyAssignments(const JoyButtonSlot &slot)
     if (slot.easingTime.isValid())
         easingTime.start();
     easingActive = slot.easingActive;
+
+    m_targetX = slot.m_targetX;
+    m_targetY = slot.m_targetY;
+    m_positionSpace = slot.m_positionSpace;
+    m_snapBack = slot.m_snapBack;
+    m_originalPosition = slot.m_originalPosition;
 
     if (!slot.getTextData().isNull() && (slot.getTextData() != ""))
         m_textData = slot.getTextData();

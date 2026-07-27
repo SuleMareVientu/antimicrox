@@ -113,7 +113,7 @@ inline QString configAntimicroLegacyFilePath()
 #endif
 }
 
-const int LATESTCONFIGFILEVERSION = 19;
+const int LATESTCONFIGFILEVERSION = 20;
 // Specify the last known profile version that requires a migration
 // to be performed in order to be compatible with the latest version.
 const int LATESTCONFIGMIGRATIONVERSION = 5;

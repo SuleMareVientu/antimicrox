@@ -5,6 +5,7 @@
 #include <QObject>
 #include <QPoint>
 #include <QString>
+#include <QRect>
 
 class WinExtras : public QObject
 {
@@ -29,6 +30,7 @@ class WinExtras : public QObject
     static QString getCurrentWindowText();
     static bool raiseProcessPriority();
     static QPoint getCursorPos();
+    static QRect getForegroundWindowRect();
 
   protected:
     explicit WinExtras(QObject *parent = 0);

@@ -62,6 +62,7 @@ class X11Extras : public QObject
     QString getWindowTitle(Window window);
     QString getWindowClass(Window window);
     unsigned long getWindowInFocus();
+    QRect getWindowGeometry(Window window);
     int getGroup1KeySym(int virtualkey);
 
     void x11ResetMouseAccelerationChange();

@@ -225,6 +225,7 @@ set(antimicrox_SOURCES
         src/mousedialog/mousedpadsettingsdialog.cpp
         src/mousedialog/mousesensorsettingsdialog.cpp
         src/mousedialog/springmoderegionpreview.cpp
+        src/mousedialog/joymousepositiondialog.cpp
         src/mousedialog/uihelpers/mouseaxissettingsdialoghelper.cpp
         src/mousedialog/uihelpers/mousebuttonsettingsdialoghelper.cpp
         src/mousedialog/uihelpers/mousecontrolsticksettingsdialoghelper.cpp
@@ -360,6 +361,7 @@ set(antimicrox_HEADERS
         src/mousedialog/mousedpadsettingsdialog.h
         src/mousedialog/springmoderegionpreview.h
         src/mousedialog/mousesensorsettingsdialog.h
+        src/mousedialog/joymousepositiondialog.h
         src/mousedialog/uihelpers/mouseaxissettingsdialoghelper.h
         src/mousedialog/uihelpers/mousebuttonsettingsdialoghelper.h
         src/mousedialog/uihelpers/mousecontrolsticksettingsdialoghelper.h
@@ -425,6 +427,7 @@ set(antimicrox_FORMS
         src/gui/mainwindow.ui
         src/gui/mousesettingsdialog.ui
         src/gui/qkeydisplaydialog.ui
+        src/mousedialog/joymousepositiondialog.ui
         src/gui/quicksetdialog.ui
         src/gui/setaxisthrottledialog.ui
         src/gui/setnamesdialog.ui

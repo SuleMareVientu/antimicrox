@@ -42,6 +42,10 @@
 #define VERBOSE() LogHelper(Logger::LogLevel::LOG_VERBOSE, __LINE__, __FILE__)
 #define INFO() LogHelper(Logger::LogLevel::LOG_INFO, __LINE__, __FILE__)
 #define WARN() LogHelper(Logger::LogLevel::LOG_WARNING, __LINE__, __FILE__)
+
+#ifdef ERROR
+#undef ERROR
+#endif
 #define ERROR() LogHelper(Logger::LogLevel::LOG_ERROR, __LINE__, __FILE__)
 /**
  * @brief Custom singleton class used for logging across application.

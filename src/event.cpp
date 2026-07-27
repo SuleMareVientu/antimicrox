@@ -187,6 +187,31 @@ void sendevent(JoyButtonSlot *slot, bool pressed)
                     << " executed successfully with pid: " << pid;
         else
             qWarning() << "Command " << slot->getTextData() << " " << argumentsString << " cannot be executed, pid: " << pid;
+    } else if ((device == JoyButtonSlot::JoyMousePosition) && pressed)
+    {
+        if (slot->getSnapBack())
+        {
+            slot->setOriginalPosition(QCursor::pos());
+        }
+
+        QRect targetRect;
+        if (resolveMousePositionTargetRect(slot, targetRect))
+        {
+            int targetX = targetRect.x() + qRound((slot->getTargetX() / 65535.0) * targetRect.width());
+            int targetY = targetRect.y() + qRound((slot->getTargetY() / 65535.0) * targetRect.height());
+            warpCursorAbsolute(targetX, targetY);
+        } else
+        {
+            qWarning() << "Mouse Position slot: could not resolve a target rectangle "
+                           "(no active window found, or unsupported on this display server); skipped.";
+        }
+    } else if ((device == JoyButtonSlot::JoyMousePosition) && !pressed)
+    {
+        if (slot->getSnapBack())
+        {
+            QPoint orig = slot->getOriginalPosition();
+            warpCursorAbsolute(orig.x(), orig.y());
+        }
     }
 }
 
@@ -589,6 +614,74 @@ void sendSpringEvent(PadderCommon::springModeInfo *fullSpring, PadderCommon::spr
         PadderCommon::mouseHelperObj.pivotPoint[0] = -1;
         PadderCommon::mouseHelperObj.pivotPoint[1] = -1;
     }
+}
+
+bool resolveMousePositionTargetRect(JoyButtonSlot *slot, QRect &outRect)
+{
+    if (slot->getPositionSpace() == JoyButtonSlot::PositionRelativeToScreen)
+    {
+        int screenIndex = slot->getSlotCode();
+        QScreen *screen = (screenIndex == -1 || screenIndex >= QGuiApplication::screens().count())
+                               ? QGuiApplication::primaryScreen()
+                               : QGuiApplication::screens().at(screenIndex);
+        outRect = screen->geometry();
+        return true;
+    }
+    else if (slot->getPositionSpace() == JoyButtonSlot::PositionRelativeToActiveWindow)
+    {
+        if (QGuiApplication::platformName() == QStringLiteral("wayland"))
+        {
+            static bool waylandWarningPrinted = false;
+            if (!waylandWarningPrinted)
+            {
+                qWarning() << "Active Window mouse positioning is not supported on Wayland.";
+                waylandWarningPrinted = true;
+            }
+            return false;
+        }
+
+#if defined(Q_OS_UNIX) && defined(WITH_X11)
+        Window focusedWindow = X11Extras::getInstance()->getWindowInFocus();
+        if (focusedWindow != None)
+        {
+            outRect = X11Extras::getInstance()->getWindowGeometry(focusedWindow);
+            return true;
+        }
+#elif defined(Q_OS_WIN)
+        outRect = WinExtras::getForegroundWindowRect();
+        return true;
+#endif
+    }
+    return false;
+}
+
+void warpCursorAbsolute(int x, int y)
+{
+    BaseEventHandler *handler = EventHandlerFactory::getInstance()->handler();
+
+    QRect deskRect = QGuiApplication::primaryScreen()->geometry();
+    for (QScreen *screen : QGuiApplication::screens()) {
+        if (screen->geometry().contains(x, y)) {
+            deskRect = screen->geometry();
+            break;
+        }
+    }
+    
+    int right = deskRect.width() + deskRect.x();
+    int bottom = deskRect.height() + deskRect.y();
+
+#if defined(Q_OS_UNIX)
+    if (handler->getIdentifier() == "xtest")
+    {
+        handler->sendMouseAbsEvent(x, y, -1);
+    }
+    else if (handler->getIdentifier() == "uinput")
+    {
+        handler->sendMouseSpringEvent(x, y, right, bottom);
+    }
+#elif defined(Q_OS_WIN)
+    handler->sendMouseSpringEvent(x, y, right, bottom);
+#endif
 }
 
 int X11KeySymToKeycode(const QString &key)

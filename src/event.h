@@ -30,6 +30,9 @@ void sendKeybEvent(JoyButtonSlot *slot, bool pressed = true);
 void sendSpringEvent(PadderCommon::springModeInfo *fullSpring, PadderCommon::springModeInfo *relativeSpring = 0,
                      int *const mousePosX = 0, int *const mousePos = 0);
 
+bool resolveMousePositionTargetRect(JoyButtonSlot *slot, QRect &outRect);
+void warpCursorAbsolute(int x, int y);
+
 int X11KeySymToKeycode(const QString &key);
 QString keycodeToKeyString(int keycode, int alias = 0);
 int X11KeyCodeToX11KeySym(int keycode);

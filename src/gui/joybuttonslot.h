@@ -56,7 +56,8 @@ class JoyButtonSlot : public QObject
         JoySetChange,
         JoyTextEntry,
         JoyExecute,
-        JoyMix
+        JoyMix,
+        JoyMousePosition
     };
 
     enum JoySlotMouseDirection
@@ -78,6 +79,12 @@ class JoyButtonSlot : public QObject
         MouseLB = 1,
         MouseMB,
         MouseRB
+    };
+
+    enum JoyMousePositionSpace
+    {
+        PositionRelativeToScreen = 0,
+        PositionRelativeToActiveWindow = 1
     };
 
     explicit JoyButtonSlot(QObject *parent = nullptr);
@@ -112,6 +119,18 @@ class JoyButtonSlot : public QObject
 
     void setTextData(QString textData);
     QString getTextData() const;
+
+    void setTargetPosition(int x, int y);
+    int getTargetX() const;
+    int getTargetY() const;
+    void setPositionSpace(JoyMousePositionSpace space);
+    JoyMousePositionSpace getPositionSpace() const;
+
+    void setSnapBack(bool snapBack);
+    bool getSnapBack() const;
+
+    void setOriginalPosition(QPoint pos);
+    QPoint getOriginalPosition() const;
 
     void setExtraData(QVariant data);
     QVariant getExtraData() const;
@@ -148,6 +167,12 @@ class JoyButtonSlot : public QObject
     bool easingActive;
     QString m_textData;
     QVariant extraData;
+
+    int m_targetX;
+    int m_targetY;
+    JoyMousePositionSpace m_positionSpace;
+    bool m_snapBack;
+    QPoint m_originalPosition;
 };
 
 Q_DECLARE_METATYPE(JoyButtonSlot *)

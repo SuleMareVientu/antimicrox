@@ -129,7 +129,7 @@ bool XMLConfigReader::read()
                     xml->addData(migrationString);                    // Add converted XML string to reader
                     xml->readNextStartElement();                      // Skip joystick root node
                     configFile->close();                              // Close current config file
-                    configFile->open(QFile::WriteOnly | QFile::Text); // Write converted XML to file
+                    (void)configFile->open(QFile::WriteOnly | QFile::Text); // Write converted XML to file
 
                     if (configFile->isOpen())
                     {

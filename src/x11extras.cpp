@@ -596,6 +596,32 @@ unsigned long X11Extras::getWindowInFocus()
     return result;
 }
 
+QRect X11Extras::getWindowGeometry(Window window)
+{
+    QRect result;
+    if (window == None)
+        return result;
+
+    Display *display = this->display();
+    if (display == nullptr)
+        return result;
+
+    Window clientWindow = findClientWindow(window);
+    if (clientWindow == None)
+        clientWindow = window;
+
+    XWindowAttributes attrs;
+    if (XGetWindowAttributes(display, clientWindow, &attrs))
+    {
+        int x, y;
+        Window child;
+        XTranslateCoordinates(display, clientWindow, attrs.root, 0, 0, &x, &y, &child);
+        result = QRect(x, y, attrs.width, attrs.height);
+    }
+
+    return result;
+}
+
 /**
  * @brief Get QString representation of currently utilized X display.
  * @return
