@@ -10,9 +10,6 @@
 
 #if defined(Q_OS_WIN)
 #include <windows.h>
-#elif defined(Q_OS_UNIX) && defined(WITH_X11)
-#include "x11extras.h"
-#include <X11/Xlib.h>
 #endif
 
 #include "event.h"
@@ -29,7 +26,11 @@ void PositionPickerOverlay::mousePressEvent(QMouseEvent *event)
 {
     if (event->button() == Qt::LeftButton)
     {
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+        QPoint globalPos = event->globalPos();
+#else
         QPoint globalPos = event->globalPosition().toPoint();
+#endif
         hide();
         emit positionPicked(globalPos);
         deleteLater();
