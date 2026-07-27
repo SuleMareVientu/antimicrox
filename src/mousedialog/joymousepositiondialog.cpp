@@ -8,6 +8,8 @@
 #include <QMouseEvent>
 #include <QKeyEvent>
 
+#include "event.h"
+
 #if defined(Q_OS_WIN)
 #include <windows.h>
 #elif defined(Q_OS_UNIX) && defined(WITH_X11)
@@ -15,8 +17,6 @@
 #include <X11/Xlib.h>
 #undef Status
 #endif
-
-#include "event.h"
 
 PositionPickerOverlay::PositionPickerOverlay(QWidget *parent)
     : QWidget(parent, Qt::Window | Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint | Qt::Tool)
