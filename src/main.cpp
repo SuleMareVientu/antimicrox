@@ -445,7 +445,7 @@ int main(int argc, char *argv[])
     } else
     {
         (void)myappTranslator.load(QString("antimicrox_").append(targetLang),
-                             QApplication::applicationDirPath().append("/../share/antimicrox/translations"));
+                                   QApplication::applicationDirPath().append("/../share/antimicrox/translations"));
     }
 
     antimicrox.installTranslator(&myappTranslator);

@@ -1,9 +1,9 @@
 #ifndef JOYMOUSEPOSITIONDIALOG_H
 #define JOYMOUSEPOSITIONDIALOG_H
 
-#include <QDialog>
-#include "joybuttontypes/joybutton.h"
 #include "joybuttonslot.h"
+#include "joybuttontypes/joybutton.h"
+#include <QDialog>
 
 namespace Ui {
 class JoyMousePositionDialog;
@@ -12,13 +12,13 @@ class JoyMousePositionDialog;
 class PositionPickerOverlay : public QWidget
 {
     Q_OBJECT
-public:
+  public:
     explicit PositionPickerOverlay(QWidget *parent = nullptr);
 
-signals:
+  signals:
     void positionPicked(QPoint pos);
 
-protected:
+  protected:
     void mousePressEvent(QMouseEvent *event) override;
     void keyPressEvent(QKeyEvent *event) override;
     void paintEvent(QPaintEvent *event) override;
@@ -28,16 +28,16 @@ class JoyMousePositionDialog : public QDialog
 {
     Q_OBJECT
 
-public:
+  public:
     explicit JoyMousePositionDialog(JoyButtonSlot *slot, QWidget *parent = nullptr);
     ~JoyMousePositionDialog();
 
-private slots:
+  private slots:
     void on_buttonBox_accepted();
     void updateSpinBoxesEnabledState(int index);
     void on_pickPositionButton_clicked();
 
-private:
+  private:
     Ui::JoyMousePositionDialog *ui;
     JoyButtonSlot *m_slot;
 };

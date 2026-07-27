@@ -176,16 +176,15 @@ void JoyButtonContextMenu::mouseMoveToPosition()
 {
     JoyButtonSlot *slot = new JoyButtonSlot(0, JoyButtonSlot::JoyMousePosition, nullptr);
     JoyMousePositionDialog *dialog = new JoyMousePositionDialog(slot, qobject_cast<QWidget *>(parent()));
-    
+
     JoyButton *localButton = button;
-    
+
     if (dialog->exec() == QDialog::Accepted)
     {
         PadderCommon::inputDaemonMutex.lock();
         localButton->insertAssignedSlot(slot);
         PadderCommon::inputDaemonMutex.unlock();
-    }
-    else
+    } else
     {
         delete slot;
     }

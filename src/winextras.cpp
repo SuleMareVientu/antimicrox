@@ -6,11 +6,11 @@
 #include <qt_windows.h>
 
 #include <QCoreApplication>
-#include <QGuiApplication>
-#include <QScreen>
 #include <QDebug>
 #include <QDir>
+#include <QGuiApplication>
 #include <QHashIterator>
+#include <QScreen>
 #include <QSettings>
 
 #include "winextras.h"
@@ -517,12 +517,13 @@ QRect WinExtras::getForegroundWindowRect()
         if (GetWindowRect(hwnd, &rect))
         {
             result = QRect(rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top);
-            
-            if (QGuiApplication::primaryScreen()) {
+
+            if (QGuiApplication::primaryScreen())
+            {
                 qreal ratio = QGuiApplication::primaryScreen()->devicePixelRatio();
-                if (ratio != 1.0) {
-                    result = QRect(result.x() / ratio, result.y() / ratio, 
-                                   result.width() / ratio, result.height() / ratio);
+                if (ratio != 1.0)
+                {
+                    result = QRect(result.x() / ratio, result.y() / ratio, result.width() / ratio, result.height() / ratio);
                 }
             }
         }

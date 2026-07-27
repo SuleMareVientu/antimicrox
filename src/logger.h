@@ -44,7 +44,7 @@
 #define WARN() LogHelper(Logger::LogLevel::LOG_WARNING, __LINE__, __FILE__)
 
 #ifdef ERROR
-#undef ERROR
+    #undef ERROR
 #endif
 #define ERROR() LogHelper(Logger::LogLevel::LOG_ERROR, __LINE__, __FILE__)
 /**

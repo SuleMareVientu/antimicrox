@@ -57,10 +57,10 @@ void PositionPickerOverlay::paintEvent(QPaintEvent *event)
     painter.fillRect(rect(), QColor(0, 0, 0, 80));
 }
 
-JoyMousePositionDialog::JoyMousePositionDialog(JoyButtonSlot *slot, QWidget *parent) :
-    QDialog(parent),
-    ui(new Ui::JoyMousePositionDialog),
-    m_slot(slot)
+JoyMousePositionDialog::JoyMousePositionDialog(JoyButtonSlot *slot, QWidget *parent)
+    : QDialog(parent)
+    , ui(new Ui::JoyMousePositionDialog)
+    , m_slot(slot)
 {
     ui->setupUi(this);
 
@@ -70,34 +70,30 @@ JoyMousePositionDialog::JoyMousePositionDialog(JoyButtonSlot *slot, QWidget *par
 
     // Set initial values from slot
     int spaceIndex = ui->positionSpaceComboBox->findData(m_slot->getPositionSpace());
-    if (spaceIndex != -1) {
+    if (spaceIndex != -1)
+    {
         ui->positionSpaceComboBox->setCurrentIndex(spaceIndex);
     }
-    
+
     ui->targetXSpinBox->setValue(m_slot->getTargetX() / 65535.0 * 100.0);
     ui->targetYSpinBox->setValue(m_slot->getTargetY() / 65535.0 * 100.0);
-    
+
     ui->snapBackCheckBox->setChecked(m_slot->getSnapBack());
 
     connect(ui->positionSpaceComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(updateSpinBoxesEnabledState(int)));
     updateSpinBoxesEnabledState(ui->positionSpaceComboBox->currentIndex());
 }
 
-JoyMousePositionDialog::~JoyMousePositionDialog()
-{
-    delete ui;
-}
+JoyMousePositionDialog::~JoyMousePositionDialog() { delete ui; }
 
-void JoyMousePositionDialog::updateSpinBoxesEnabledState(int index)
-{
-    Q_UNUSED(index);
-}
+void JoyMousePositionDialog::updateSpinBoxesEnabledState(int index) { Q_UNUSED(index); }
 
 void JoyMousePositionDialog::on_buttonBox_accepted()
 {
-    m_slot->setPositionSpace(static_cast<JoyButtonSlot::JoyMousePositionSpace>(ui->positionSpaceComboBox->currentData().toInt()));
-    m_slot->setTargetPosition(qRound(ui->targetXSpinBox->value() / 100.0 * 65535.0), 
-                              qRound(ui->targetYSpinBox->value() / 100.0 * 65535.0));
+    m_slot->setPositionSpace(
+        static_cast<JoyButtonSlot::JoyMousePositionSpace>(ui->positionSpaceComboBox->currentData().toInt()));
+    m_slot->setTargetPosition(qRound(ui->targetXSpinBox->value() / 100.0 * 65535.0),
+                               qRound(ui->targetYSpinBox->value() / 100.0 * 65535.0));
     m_slot->setSnapBack(ui->snapBackCheckBox->isChecked());
 }
 
@@ -113,21 +109,21 @@ void JoyMousePositionDialog::on_pickPositionButton_clicked()
     overlay->setGeometry(virtualGeo);
 
     connect(overlay, &PositionPickerOverlay::positionPicked, this, [this](QPoint pos) {
-        JoyButtonSlot::JoyMousePositionSpace space = static_cast<JoyButtonSlot::JoyMousePositionSpace>(
-            ui->positionSpaceComboBox->currentData().toInt());
+        JoyButtonSlot::JoyMousePositionSpace space =
+            static_cast<JoyButtonSlot::JoyMousePositionSpace>(ui->positionSpaceComboBox->currentData().toInt());
 
         QRect targetRect;
         if (space == JoyButtonSlot::PositionRelativeToScreen)
         {
             QScreen *screen = QGuiApplication::screenAt(pos);
-            if (!screen) screen = QGuiApplication::primaryScreen();
+            if (!screen)
+                screen = QGuiApplication::primaryScreen();
             targetRect = screen->geometry();
-        }
-        else if (space == JoyButtonSlot::PositionRelativeToActiveWindow)
+        } else if (space == JoyButtonSlot::PositionRelativeToActiveWindow)
         {
 #if defined(Q_OS_WIN)
             qreal ratio = QGuiApplication::primaryScreen() ? QGuiApplication::primaryScreen()->devicePixelRatio() : 1.0;
-            POINT pt = { (LONG)(pos.x() * ratio), (LONG)(pos.y() * ratio) };
+            POINT pt = {(LONG)(pos.x() * ratio), (LONG)(pos.y() * ratio)};
             HWND hwnd = WindowFromPoint(pt);
             if (hwnd)
             {
@@ -135,7 +131,8 @@ void JoyMousePositionDialog::on_pickPositionButton_clicked()
                 RECT rect;
                 if (GetWindowRect(hwnd, &rect))
                 {
-                    targetRect = QRect(rect.left / ratio, rect.top / ratio, (rect.right - rect.left) / ratio, (rect.bottom - rect.top) / ratio);
+                    targetRect = QRect(rect.left / ratio, rect.top / ratio, (rect.right - rect.left) / ratio,
+                                       (rect.bottom - rect.top) / ratio);
                 }
             }
 #elif defined(Q_OS_UNIX) && defined(WITH_X11)

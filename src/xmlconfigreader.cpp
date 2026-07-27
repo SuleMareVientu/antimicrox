@@ -125,10 +125,10 @@ bool XMLConfigReader::read()
 
                 if (migrationString.length() > 0)
                 {
-                    xml->clear();                                     // Remove QFile from reader and clear state
-                    xml->addData(migrationString);                    // Add converted XML string to reader
-                    xml->readNextStartElement();                      // Skip joystick root node
-                    configFile->close();                              // Close current config file
+                    xml->clear();                                           // Remove QFile from reader and clear state
+                    xml->addData(migrationString);                          // Add converted XML string to reader
+                    xml->readNextStartElement();                            // Skip joystick root node
+                    configFile->close();                                    // Close current config file
                     (void)configFile->open(QFile::WriteOnly | QFile::Text); // Write converted XML to file
 
                     if (configFile->isOpen())

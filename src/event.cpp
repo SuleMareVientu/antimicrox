@@ -203,7 +203,7 @@ void sendevent(JoyButtonSlot *slot, bool pressed)
         } else
         {
             qWarning() << "Mouse Position slot: could not resolve a target rectangle "
-                           "(no active window found, or unsupported on this display server); skipped.";
+                          "(no active window found, or unsupported on this display server); skipped.";
         }
     } else if ((device == JoyButtonSlot::JoyMousePosition) && !pressed)
     {
@@ -622,12 +622,11 @@ bool resolveMousePositionTargetRect(JoyButtonSlot *slot, QRect &outRect)
     {
         int screenIndex = slot->getSlotCode();
         QScreen *screen = (screenIndex == -1 || screenIndex >= QGuiApplication::screens().count())
-                               ? QGuiApplication::primaryScreen()
-                               : QGuiApplication::screens().at(screenIndex);
+                              ? QGuiApplication::primaryScreen()
+                              : QGuiApplication::screens().at(screenIndex);
         outRect = screen->geometry();
         return true;
-    }
-    else if (slot->getPositionSpace() == JoyButtonSlot::PositionRelativeToActiveWindow)
+    } else if (slot->getPositionSpace() == JoyButtonSlot::PositionRelativeToActiveWindow)
     {
         if (QGuiApplication::platformName() == QStringLiteral("wayland"))
         {
@@ -660,13 +659,15 @@ void warpCursorAbsolute(int x, int y)
     BaseEventHandler *handler = EventHandlerFactory::getInstance()->handler();
 
     QRect deskRect = QGuiApplication::primaryScreen()->geometry();
-    for (QScreen *screen : QGuiApplication::screens()) {
-        if (screen->geometry().contains(x, y)) {
+    for (QScreen *screen : QGuiApplication::screens())
+    {
+        if (screen->geometry().contains(x, y))
+        {
             deskRect = screen->geometry();
             break;
         }
     }
-    
+
     int right = deskRect.width() + deskRect.x();
     int bottom = deskRect.height() + deskRect.y();
 
@@ -674,8 +675,7 @@ void warpCursorAbsolute(int x, int y)
     if (handler->getIdentifier() == "xtest")
     {
         handler->sendMouseAbsEvent(x, y, -1);
-    }
-    else if (handler->getIdentifier() == "uinput")
+    } else if (handler->getIdentifier() == "uinput")
     {
         handler->sendMouseSpringEvent(x, y, right, bottom);
     }

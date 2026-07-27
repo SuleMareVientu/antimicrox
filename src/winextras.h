@@ -4,8 +4,8 @@
 #include <QHash>
 #include <QObject>
 #include <QPoint>
-#include <QString>
 #include <QRect>
+#include <QString>
 
 class WinExtras : public QObject
 {
