@@ -10,6 +10,10 @@
 
 #if defined(Q_OS_WIN)
 #include <windows.h>
+#elif defined(Q_OS_UNIX) && defined(WITH_X11)
+#include "x11extras.h"
+#include <X11/Xlib.h>
+#undef Status
 #endif
 
 #include "event.h"
