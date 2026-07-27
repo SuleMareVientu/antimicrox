@@ -2,20 +2,20 @@
 #include "ui_joymousepositiondialog.h"
 
 #include <QApplication>
-#include <QScreen>
 #include <QGuiApplication>
-#include <QPainter>
-#include <QMouseEvent>
 #include <QKeyEvent>
+#include <QMouseEvent>
+#include <QPainter>
+#include <QScreen>
 
 #include "event.h"
 
 #if defined(Q_OS_WIN)
-#include <windows.h>
+    #include <windows.h>
 #elif defined(Q_OS_UNIX) && defined(WITH_X11)
-#include "x11extras.h"
-#include <X11/Xlib.h>
-#undef Status
+    #include "x11extras.h"
+    #include <X11/Xlib.h>
+    #undef Status
 #endif
 
 PositionPickerOverlay::PositionPickerOverlay(QWidget *parent)
@@ -93,7 +93,7 @@ void JoyMousePositionDialog::on_buttonBox_accepted()
     m_slot->setPositionSpace(
         static_cast<JoyButtonSlot::JoyMousePositionSpace>(ui->positionSpaceComboBox->currentData().toInt()));
     m_slot->setTargetPosition(qRound(ui->targetXSpinBox->value() / 100.0 * 65535.0),
-                               qRound(ui->targetYSpinBox->value() / 100.0 * 65535.0));
+                              qRound(ui->targetYSpinBox->value() / 100.0 * 65535.0));
     m_slot->setSnapBack(ui->snapBackCheckBox->isChecked());
 }
 
