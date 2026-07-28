@@ -4,6 +4,7 @@
 #include <QApplication>
 #include <QGuiApplication>
 #include <QKeyEvent>
+#include <QMessageBox>
 #include <QMouseEvent>
 #include <QPainter>
 #include <QScreen>
@@ -99,6 +100,17 @@ void JoyMousePositionDialog::on_buttonBox_accepted()
 
 void JoyMousePositionDialog::on_pickPositionButton_clicked()
 {
+    JoyButtonSlot::JoyMousePositionSpace space =
+        static_cast<JoyButtonSlot::JoyMousePositionSpace>(ui->positionSpaceComboBox->currentData().toInt());
+
+    if (space == JoyButtonSlot::PositionRelativeToActiveWindow &&
+        QGuiApplication::platformName() == QStringLiteral("wayland"))
+    {
+        QMessageBox::warning(this, tr("Unsupported Feature"),
+                             tr("Active Window mouse positioning is not supported on Wayland."));
+        return;
+    }
+
     PositionPickerOverlay *overlay = new PositionPickerOverlay(this);
 
     QRect virtualGeo;
